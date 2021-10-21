@@ -190,21 +190,53 @@ bot.on("callback_query", query => {
         return obj[keys[ keys.length * Math.random() << 0]]; 
     }
 
+
     switch(artData){
         case "SFW":
             Axios.get(`https://api.waifu.pics/sfw/${randProps(genresSFW)}`)
             .then((res) => {
                 let md = `Ссылка ${res.data.url}`
 
-                bot.sendMessage(id, md)
+
+                bot.sendMessage(id, md) 
+                bot.sendMessage(id, 'Выберите жанр', {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{
+                                text: "SFW - 🔥",
+                                callback_data: "SFW"
+                            },
+                            {
+                                text: 'NSFW - 🔞',
+                                callback_data: "NSFW"
+                            }]
+                        ]
+                    }
+                })
             })
             break;
+
+
         case "NSFW":
             Axios.get(`https://api.waifu.pics/nsfw/${randProps(genresNSFW)}`)
             .then((res) => {
                 let md = `Ссылка ${res.data.url}`
 
                 bot.sendMessage(id, md)
+                bot.sendMessage(id, 'Выберите жанр', {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{
+                                text: "SFW - 🔥",
+                                callback_data: "SFW"
+                            },
+                            {
+                                text: 'NSFW - 🔞',
+                                callback_data: "NSFW"
+                            }]
+                        ]
+                    }
+                })
             })
             break;
     }

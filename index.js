@@ -41,106 +41,107 @@ bot.onText(/\/curse/, (msg) => {
         }
     })
 
-    bot.on("callback_query", query => {
-        const id = query.message.chat.id,
-            curData = query.data,
-            flag = {
-                "RUB": "🇷🇺",
-                "EUR": "🇪🇺",
-                "USD": "🇺🇸",
-                "GBP": "🇬🇧",
-                "BTC": "",
-                "ETC": "",
-                "LTC": "",
-            };
+})
 
-        (function () {
-            /**
-             * @param {String}  type  Тип корректировки.
-             * @param {Number}  value Число.
-             * @param {Integer} exp   Показатель степени (десятичный логарифм основания корректировки).
-             * @returns {Number} Скорректированное значение.
-             */
-            function decimalAdjust(type, value, exp) {
-                // Если степень не определена, либо равна нулю...
-                if (typeof exp === 'undefined' || +exp === 0) {
-                    return Math[type](value);
-                }
-                value = +value;
-                exp = +exp;
+bot.on("callback_query", query => {
+    const id = query.message.chat.id,
+        curData = query.data,
+        flag = {
+            "RUB": "🇷🇺",
+            "EUR": "🇪🇺",
+            "USD": "🇺🇸",
+            "GBP": "🇬🇧",
+            "BTC": "",
+            "ETC": "",
+            "LTC": "",
+        };
 
-                // Сдвиг разрядов
-                value = value.toString().split('e');
-                value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
-                // Обратный сдвиг
-                value = value.toString().split('e');
-                return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+    (function () {
+        /**
+         * @param {String}  type  Тип корректировки.
+         * @param {Number}  value Число.
+         * @param {Integer} exp   Показатель степени (десятичный логарифм основания корректировки).
+         * @returns {Number} Скорректированное значение.
+         */
+        function decimalAdjust(type, value, exp) {
+            // Если степень не определена, либо равна нулю...
+            if (typeof exp === 'undefined' || +exp === 0) {
+                return Math[type](value);
             }
+            value = +value;
+            exp = +exp;
 
-            // Десятичное округление к ближайшему
-            if (!Math.round10) {
-                Round10 = function (value, exp) {
-                    return decimalAdjust('round', value, exp);
-                }
-            }
-        })();
-
-        if (curData === "EUR") {
-            Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur/rub.json")
-                .then((res) => {
-                    let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
-
-                    bot.sendMessage(id, md, {
-                        parse_mode: 'Markdown'
-                    })
-                })
-        } else if (curData === "USD") {
-            Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/usd/rub.json")
-                .then((res) => {
-                    let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
-
-                    bot.sendMessage(id, md, {
-                        parse_mode: 'Markdown'
-                    })
-                })
-        } else if (curData === "GBP") {
-            Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/gbp/rub.json")
-                .then((res) => {
-                    let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
-
-                    bot.sendMessage(id, md, {
-                        parse_mode: 'Markdown'
-                    })
-                })
-        } else if (curData === "BTC") {
-            Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/btc/rub.json")
-                .then((res) => {
-                    let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
-
-                    bot.sendMessage(id, md, {
-                        parse_mode: 'Markdown'
-                    })
-                })
-        } else if (curData === "ETC") {
-            Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/etc/rub.json")
-                .then((res) => {
-                    let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
-
-                    bot.sendMessage(id, md, {
-                        parse_mode: 'Markdown'
-                    })
-                })
-        } else if (curData === "LTC") {
-            Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/ltc/rub.json")
-                .then((res) => {
-                    let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
-
-                    bot.sendMessage(id, md, {
-                        parse_mode: 'Markdown'
-                    })
-                })
+            // Сдвиг разрядов
+            value = value.toString().split('e');
+            value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+            // Обратный сдвиг
+            value = value.toString().split('e');
+            return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
         }
-    })
+
+        // Десятичное округление к ближайшему
+        if (!Math.round10) {
+            Round10 = function (value, exp) {
+                return decimalAdjust('round', value, exp);
+            }
+        }
+    })();
+
+    if (curData === "EUR") {
+        Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur/rub.json")
+            .then((res) => {
+                let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
+
+                bot.sendMessage(id, md, {
+                    parse_mode: 'Markdown'
+                })
+            })
+    } else if (curData === "USD") {
+        Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/usd/rub.json")
+            .then((res) => {
+                let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
+
+                bot.sendMessage(id, md, {
+                    parse_mode: 'Markdown'
+                })
+            })
+    } else if (curData === "GBP") {
+        Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/gbp/rub.json")
+            .then((res) => {
+                let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
+
+                bot.sendMessage(id, md, {
+                    parse_mode: 'Markdown'
+                })
+            })
+    } else if (curData === "BTC") {
+        Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/btc/rub.json")
+            .then((res) => {
+                let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
+
+                bot.sendMessage(id, md, {
+                    parse_mode: 'Markdown'
+                })
+            })
+    } else if (curData === "ETC") {
+        Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/etc/rub.json")
+            .then((res) => {
+                let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
+
+                bot.sendMessage(id, md, {
+                    parse_mode: 'Markdown'
+                })
+            })
+    } else if (curData === "LTC") {
+        Axios.get("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/ltc/rub.json")
+            .then((res) => {
+                let md = `*${flag[curData]}${curData} ⇌ ${flag.RUB}RUB* \n${Round10(res.data.rub , -1)}`
+
+                bot.sendMessage(id, md, {
+                    parse_mode: 'Markdown'
+                })
+            })
+    }
 })
 
 
